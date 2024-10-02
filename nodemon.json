@@ -1,5 +1,7 @@
 {
-    "watch": ["src"],
-    "ext": "ts",
+    "watch": ["src/"],
+    "ext": "js,ts, json",
+    "verbose": true,
+    "restartable": "rs",
     "exec": "ts-node src/app.ts"
 }

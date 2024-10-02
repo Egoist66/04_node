@@ -1,18 +1,19 @@
 import express from 'express';
-
+import {logger} from "./middlewares/logger";
 
 const app = express();
 const port = 3003;
 
-
-app.use(express.static('public'));
+app.use(express.static('./src/public'));
 app.use(express.json());
+app.use(logger)
+
 
 app.get('/', async (req, res) => {
     res.type('html');
 
 
-    res.status(200).send('Home');
+    res.status(200).send('Home!!!!');
     console.log(req.method);
 
 });
