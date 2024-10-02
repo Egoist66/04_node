@@ -4,15 +4,16 @@ import express from 'express';
 const app = express();
 const port = 3003;
 
+
+app.use(express.static('public'));
 app.use(express.json());
 
 app.get('/', async (req, res) => {
-    console.log(req.url);
     res.type('html');
 
-    res.status(200).send('Home');
-    
 
+    res.status(200).send('Home');
+    console.log(req.method);
 
 });
 
@@ -27,7 +28,6 @@ app.post('/users', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
-
 
 
 });
