@@ -7,14 +7,14 @@ const {app, config, listen} = bootstrapApp();
 listen(config.port);
 
 
-const controllers = [
+const Controllers = [
     UsersController,
     HomeController,
     CoursesController,
 ];
 
-controllers.forEach(controller => {
-    controller.index(app)
+Controllers.forEach(Controller => {
+    Controller.index(app)
 })
 
 
