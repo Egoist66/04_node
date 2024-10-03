@@ -1,35 +1,21 @@
-import express from 'express';
-import {logger} from "./middlewares/logger";
+import {UsersController} from "./Controllers/UsersController";
+import {HomeController} from "./Controllers/HomeController";
+import {bootstrapApp} from "../bootstrap/bootstrap.ts";
 
-const app = express();
-const port = 3003;
-
-app.use(express.static('./src/public'));
-app.use(express.json());
-app.use(logger)
+const {app, config, listen} = bootstrapApp();
+listen(config.port);
 
 
-app.get('/', async (req, res) => {
-    res.type('html');
+const controllers = [
+    UsersController,
+    HomeController
+];
 
-
-    res.status(200).send('Home!!!!');
-    console.log(req.method);
-
-});
-
-app.get('/users', (req, res) => {
-    res.status(200).json([{name: 'John'}, {name: 'Jane'}, {url: req.url}]);
-})
-
-app.post('/users', (req, res) => {
-    res.status(200).json({body: req.body});
+controllers.forEach(controller => {
+    controller.index(app)
 })
 
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
 
 
-});
 
