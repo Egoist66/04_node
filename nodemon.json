@@ -1,5 +1,5 @@
 {
-    "watch": ["src/"],
+    "watch": ["src/", "bootstrap/"],
     "ext": "js,ts, json",
     "verbose": true,
     "restartable": "rs",

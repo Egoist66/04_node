@@ -4,7 +4,7 @@ import {bootstrapApp} from "../bootstrap/bootstrap.ts";
 import {CoursesController} from "./Controllers/CoursesController.ts";
 
 const {app, config, listen} = bootstrapApp();
-listen(config.port);
+listen(config.server.port);
 
 
 const Controllers = [
