@@ -1,7 +1,14 @@
 import type {Express} from 'express';
 
 
-
+/**
+ *
+ *
+ * @export
+ * @abstract
+ * @class BaseController
+ * @description Base controller class. Must be extended by each controller.
+ */
 export abstract class BaseController {
     static baseUrl: string;
 

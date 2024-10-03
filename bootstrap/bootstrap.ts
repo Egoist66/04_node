@@ -4,11 +4,10 @@ import { logger } from "../src/middlewares/logger";
 
 import config from './server.config.json'
 
+
 /**
- * @description
- * Sets up an express app with a static route to the public folder, parses json and logs requests.
- * @returns {Object} - An object containing the express app, a config object with a port property,
- * setPort function to set the port and a listen function to start the server on a given port.
+ * Bootstraps an express app with some default settings and middleware and returns it along with the server config and a function to listen to the server on a given port.
+ * @returns { { app: Express; config: server.config.json; listen: (port: number) => void; } }
  */
 export function bootstrapApp(): {
   app: Express;
@@ -23,10 +22,11 @@ export function bootstrapApp(): {
 
  
 
+
   /**
-   * @description
-   * Listens to the server on a given port, and logs the server url in the console.
-   * @param {number} port - The port to listen to.
+   * Starts the express app and listens on the given port.
+   * @param {number} port - The port to listen on.
+   * @returns {void}
    */
   const listen = (port: number) => {
     app.listen(port, () =>
