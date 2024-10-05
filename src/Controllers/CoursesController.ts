@@ -41,8 +41,9 @@ export class CoursesController extends BaseController {
       
       }
       else {
-        res.send({data:db.courses});
-        res.sendStatus(200);
+        
+        res.status(200).send({data:db.courses});
+
       }
  
 
@@ -76,11 +77,48 @@ export class CoursesController extends BaseController {
   }
 
   private static post(app: Express): void {
-    
+
     app.post(this.baseUrl, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.type("json");
-      res.status(200).send(req.body);
+
+        if(req.body.title && req.body.course) {
+
+            
+            if(req.body.course === 'front-end'){
+                if(Object.values(db.courses['front-end']).map(course => course.title).includes(req.body.title)){
+                    res.status(400).send({message: 'Bad request! Title already exists!'});
+                    return;
+                }
+
+                const createdCourse = { title: req.body.title, id: Date.now() };
+
+                db.courses['front-end'].push(createdCourse);
+                res.status(201).send({data: db.courses['front-end']});
+                return;
+            }
+
+            if(req.body.course === 'back-end'){
+
+                if(Object.values(db.courses['back-end']).map(course => course.title).includes(req.body.title)){
+                    res.status(400).send({message: 'Bad request! Title already exists!'});
+                    return;
+                }
+
+                const createdCourse = { title: req.body.title, id: Date.now() };
+
+                db.courses['back-end'].push(createdCourse);
+                res.status(201).send({data: db.courses['back-end']});
+                return;
+            }
+        
+        }
+        else {
+            res.status(400).send({message: 'Bad request! Title and Course must be provided!'});
+        }
+
+
+    
     });
   }
 }
