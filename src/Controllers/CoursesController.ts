@@ -6,10 +6,17 @@ import { findByQueryOrNone, findOrNone } from "../utils/utils.ts";
 type Courses = typeof db.courses;
 type SingleCourse = Courses['back-end']
 
+
 export class CoursesController extends BaseController {
   static baseUrl: string = "/courses";
 
-  public static index(app: Express): void {
+
+  public static init(app: Express): void {
+    this.index(app)
+    this.post(app)
+  }
+
+  private static index(app: Express): void {
     app.get(this.baseUrl, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.type("json");
@@ -21,19 +28,20 @@ export class CoursesController extends BaseController {
         const coursesByTitle = findByQueryOrNone<SingleCourse[]>(db.courses, req.query.title);
 
         if(coursesByTitle && coursesByTitle.length > 0) {
-            res.status(200).send(coursesByTitle);
+            res.status(200).send({data: coursesByTitle});
             return;
         }
     
-        res.status(404).send({
+        res.status(200).send({
           message: `Course with title:${req.query.title} not found`,
+          data: []
         });
           
         
       
       }
       else {
-        res.send(db.courses);
+        res.send({data:db.courses});
         res.sendStatus(200);
       }
  
@@ -64,6 +72,15 @@ export class CoursesController extends BaseController {
       res
         .status(404)
         .send({ message: `Course with id:${req.params.id} not found` });
+    });
+  }
+
+  private static post(app: Express): void {
+    
+    app.post(this.baseUrl, (req, res) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.type("json");
+      res.status(200).send(req.body);
     });
   }
 }

@@ -14,7 +14,7 @@ const Controllers = [
 ];
 
 Controllers.forEach(Controller => {
-    Controller.index(app)
+    Controller.init(app)
 })
 
 
