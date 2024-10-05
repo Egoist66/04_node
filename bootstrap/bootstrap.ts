@@ -1,5 +1,5 @@
 import express, { Express } from "express";
-import { logger } from "../src/middlewares/logger";
+import { logger } from "../middlewares/logger";
 
 
 import config from './server.config.json'

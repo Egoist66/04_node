@@ -14,6 +14,6 @@
     "resolveJsonModule": true,
     "strict": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "middlewares"],
   "exclude": ["node_modules", "dist"]
 }
