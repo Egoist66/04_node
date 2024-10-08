@@ -51,14 +51,14 @@ export class CoursesController extends BaseController {
      
     });
 
-    app.get(`${this.baseUrl}/:id`, (req, res) => {
+    app.get(`${this.baseUrl}/:course/:id`, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.type("json");
 
    
 
       const course = findOrNone<{ title: string; id: number }>(
-        db.courses,
+        db.courses[req.params.course as unknown as keyof typeof db.courses],
         "id",
         +req.params.id
       );
@@ -86,7 +86,7 @@ export class CoursesController extends BaseController {
 
             
             if(req.body.course === 'front-end'){
-                if(Object.values(db.courses['front-end']).map(course => course.title).includes(req.body.title)){
+                if(Object.values(db.courses['front-end']).map(course => course.title).includes(req.body.title.trim())){
                     res.status(400).send({message: 'Bad request! Title already exists!'});
                     return;
                 }
@@ -100,12 +100,12 @@ export class CoursesController extends BaseController {
 
             if(req.body.course === 'back-end'){
 
-                if(Object.values(db.courses['back-end']).map(course => course.title).includes(req.body.title)){
+                if(Object.values(db.courses['back-end']).map(course => course.title).includes(req.body.title.trim())){
                     res.status(400).send({message: 'Bad request! Title already exists!'});
                     return;
                 }
 
-                const createdCourse = { title: req.body.title, id: Date.now() };
+                const createdCourse = { title: req.body.title.trim(), id: Date.now() };
 
                 db.courses['back-end'].push(createdCourse);
                 res.status(201).send({data: db.courses['back-end']});
