@@ -4,7 +4,10 @@ import { BaseController } from "./BaseController.ts";
 import { findByQueryOrNone, findOrNone } from "../utils/utils.ts";
 import { httpStatusCodes } from "../addons/http.statuses.ts";
 
+
+
 type Courses = typeof db.courses;
+type KCourses =  keyof typeof db.courses
 type SingleCourse = Courses["back-end"];
 
 export class CoursesController extends BaseController {
@@ -131,10 +134,45 @@ export class CoursesController extends BaseController {
     });
   }
 
+    /**
+     * Deletes a course from the database.
+     * @param app The express app.
+     * @returns void
+     */
   private static delete(app: Express): void {
     app.delete(`${this.baseUrl}/:course/:id`, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.type("json");
+
+      if(!req.params.id.match(/^[0-9]+$/)){
+        res
+        .status(httpStatusCodes["Bad Request"])
+        .send({ message: "Bad request! \"id\" must be a number!" });
+
+        return;
+      }
+      else {
+
+        
+        const foundCourse = db.courses[req.params.course as unknown as KCourses]
+        .find((course) => course.id === +req.params.id);
+        if(!foundCourse){
+          res
+          .status(httpStatusCodes["Not Found"])
+          .send({ message: `Course with id:${req.params.id} not found`});
+          return;
+        }
+
+
+
+        db.courses[req.params.course as unknown as KCourses] = db.courses[req.params.course as unknown as KCourses]
+        .filter(course => course.id !== +req.params.id)
+
+        res.status(httpStatusCodes["No Content"]).send()
+        
+
+      }
+     
     })
   }
 }
