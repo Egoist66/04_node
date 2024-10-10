@@ -16,6 +16,13 @@ export class CoursesController extends BaseController {
     this.delete(app);
   }
 
+  /**
+   * @description
+   * Returns all courses if no query parameter is specified.
+   * If query parameter "title" is specified, returns courses with titles matching the parameter.
+   * If query parameter "course" and "id" are specified, returns a single course with the specified id.
+   * @param {Express} app
+   */
   private static index(app: Express): void {
     app.get(this.baseUrl, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -64,6 +71,12 @@ export class CoursesController extends BaseController {
     });
   }
 
+    /**
+     * Create a new course and add it to the database.
+     * @param app The express app.
+     * @returns void
+     */
+    
   private static post(app: Express): void {
     app.post(this.baseUrl, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -119,6 +132,9 @@ export class CoursesController extends BaseController {
   }
 
   private static delete(app: Express): void {
-    
+    app.delete(`${this.baseUrl}/:course/:id`, (req, res) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.type("json");
+    })
   }
 }
