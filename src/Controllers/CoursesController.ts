@@ -4,10 +4,8 @@ import { BaseController } from "./BaseController.ts";
 import { findByQueryOrNone, findOrNone } from "../utils/utils.ts";
 import { httpStatusCodes } from "../addons/http.statuses.ts";
 
-
-
 type Courses = typeof db.courses;
-type KCourses =  keyof typeof db.courses
+type KCourses = keyof typeof db.courses;
 type SingleCourse = Courses["back-end"];
 
 export class CoursesController extends BaseController {
@@ -17,6 +15,7 @@ export class CoursesController extends BaseController {
     this.index(app);
     this.post(app);
     this.delete(app);
+    this.put(app);
   }
 
   /**
@@ -38,16 +37,16 @@ export class CoursesController extends BaseController {
         );
 
         if (coursesByTitle && coursesByTitle.length > 0) {
-          res.status(200).send({ data: coursesByTitle });
+          res.status(200).json({ data: coursesByTitle });
           return;
         }
 
-        res.status(200).send({
+        res.status(200).json({
           message: `Course with title:${req.query.title} not found`,
           data: [],
         });
       } else {
-        res.status(200).send({ data: db.courses });
+        res.status(200).json({ data: db.courses });
       }
     });
 
@@ -62,7 +61,7 @@ export class CoursesController extends BaseController {
       );
 
       if (course) {
-        res.status(200).send(course);
+        res.status(200).json(course);
 
         return;
       }
@@ -70,16 +69,16 @@ export class CoursesController extends BaseController {
       res.type("json");
       res
         .status(404)
-        .send({ message: `Course with id:${req.params.id} not found` });
+        .json({ message: `Course with id:${req.params.id} not found` });
     });
   }
 
-    /**
-     * Create a new course and add it to the database.
-     * @param app The express app.
-     * @returns void
-     */
-    
+  /**
+   * Create a new course and add it to the database.
+   * @param app The express app.
+   * @returns void
+   */
+
   private static post(app: Express): void {
     app.post(this.baseUrl, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -94,14 +93,16 @@ export class CoursesController extends BaseController {
           ) {
             res
               .status(httpStatusCodes["Bad Request"])
-              .send({ message: "Bad request! Title already exists!" });
+              .json({ message: "Bad request! Title already exists!" });
             return;
           }
 
           const createdCourse = { title: req.body.title, id: Date.now() };
 
           db.courses["front-end"].push(createdCourse);
-          res.status(httpStatusCodes.Created).send({ data: db.courses["front-end"] });
+          res
+            .status(httpStatusCodes.Created)
+            .json({ data: db.courses["front-end"] });
           return;
         }
 
@@ -113,7 +114,7 @@ export class CoursesController extends BaseController {
           ) {
             res
               .status(httpStatusCodes["Bad Request"])
-              .send({ message: "Bad request! Title already exists!" });
+              .json({ message: "Bad request! Title already exists!" });
             return;
           }
 
@@ -123,58 +124,103 @@ export class CoursesController extends BaseController {
           };
 
           db.courses["back-end"].push(createdCourse);
-          res.status(httpStatusCodes.Created).send({ data: db.courses["back-end"] });
+          res
+            .status(httpStatusCodes.Created)
+            .json({ data: db.courses["back-end"] });
           return;
         }
       } else {
         res
           .status(httpStatusCodes["Bad Request"])
-          .send({ message: "Bad request! Title and Course must be provided!" });
+          .json({ message: "Bad request! Title and Course must be provided!" });
       }
     });
   }
 
-    /**
-     * Deletes a course from the database.
-     * @param app The express app.
-     * @returns void
-     */
+  /**
+   * Deletes a course from the database.
+   * @param app The express app.
+   * @returns void
+   */
   private static delete(app: Express): void {
     app.delete(`${this.baseUrl}/:course/:id`, (req, res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.type("json");
 
-      if(!req.params.id.match(/^[0-9]+$/)){
+      if (!req.params.id.match(/^[0-9]+$/)) {
         res
-        .status(httpStatusCodes["Bad Request"])
-        .send({ message: "Bad request! \"id\" must be a number!" });
+          .status(httpStatusCodes["Bad Request"])
+          .json({ message: 'Bad request! "id" must be a number!' });
 
         return;
-      }
-      else {
-
-        
-        const foundCourse = db.courses[req.params.course as unknown as KCourses]
-        .find((course) => course.id === +req.params.id);
-        if(!foundCourse){
+      } else {
+        const foundCourse = db.courses[
+          req.params.course as unknown as KCourses
+        ].find((course) => course.id === +req.params.id);
+        if (!foundCourse) {
           res
-          .status(httpStatusCodes["Not Found"])
-          .send({ message: `Course with id:${req.params.id} not found`});
+            .status(httpStatusCodes["Not Found"])
+            .json({ message: `Course with id:${req.params.id} not found` });
           return;
         }
 
+        db.courses[req.params.course as unknown as KCourses] = db.courses[
+          req.params.course as unknown as KCourses
+        ].filter((course) => course.id !== +req.params.id);
 
-
-        db.courses[req.params.course as unknown as KCourses] = db.courses[req.params.course as unknown as KCourses]
-        .filter(course => course.id !== +req.params.id)
-
-        res.status(httpStatusCodes["No Content"]).send()
-        
-
+        res.status(httpStatusCodes["No Content"]).json();
       }
-     
-    })
+    });
+  }
+
+  private static put(app: Express): void {
+    app.put(`${this.baseUrl}/:course/:id`, (req, res) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.type("json");
+
+      if (!req.body.title) {
+        res
+          .status(httpStatusCodes["Bad Request"])
+          .json({ message: "Bad request! Title and Course must be provided!" });
+
+        return;
+      }
+
+      if (!req.params.id.match(/^[0-9]+$/)) {
+        res
+          .status(httpStatusCodes["Bad Request"])
+          .json({ message: 'Bad request! "id" must be a number!' });
+
+        return;
+      }
+
+      if(!db.courses[req.params.course as unknown as KCourses]) {
+        res
+          .status(httpStatusCodes["Bad Request"])
+          .json({ message: `Such course "${req.params.course}" doesn't exist` });
+        return;
+      }
+
+      
+      if (
+        !db.courses[req.params.course as unknown as KCourses].find(
+          (course) => course.id === +req.params.id
+        )
+      ) {
+        res
+          .status(httpStatusCodes["Not Found"])
+          .json({ message: `Course with id:${req.params.id} not found` });
+        return;
+      }
+
+      db.courses[req.params.course as unknown as KCourses] = db.courses[
+        req.params.course as unknown as KCourses
+      ].map((course) =>
+        course.id === +req.params.id
+          ? { ...course, title: req.body.title.trim() }
+          : course
+      );
+      res.status(httpStatusCodes["OK"]).json({ message: "Course updated!" });
+    });
   }
 }
-
-

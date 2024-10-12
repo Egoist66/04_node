@@ -1,4 +1,4 @@
-
+import fs from 'fs/promises'
 /**
  * Searches the given array for an element with a property equal to the given value.
  * @param {any[]} arr - The array to search.
@@ -23,4 +23,14 @@ export function findByQueryOrNone<T = null>(data: any, byKeyVal: any): T[] | nul
     }
     return null
    
+}
+
+export async function queryData<T>(path: string, format: '.ts' | '.js' | '.json'): Promise<T | null> {
+    if(!fs.glob(path + format)) {
+        return null
+    }
+    else {
+        return await import(`../data/${path}.json`)
+    }
+
 }

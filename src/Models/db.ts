@@ -1,4 +1,12 @@
-export const db = {
+export type Courses = {
+    courses: {
+        "front-end": Array<{title: string, id: number}>,
+        "back-end": Array<{title: string, id: number}>
+    }
+}
+
+
+export const db: Courses = {
     courses: {
         "front-end": [
             {title: 'React', id: 1},
