@@ -5,16 +5,20 @@ import { logger } from "../middlewares/logger";
 import config from './server.config.json'
 
 
+
 /**
- * Bootstraps an express app with some default settings and middleware and returns it along with the server config and a function to listen to the server on a given port.
- * @returns { { app: Express; config: server.config.json; listen: (port: number) => void; } }
+ * Bootstraps the express app and returns it along with the server configuration and a listen function.
+ * @returns {Object} - An object containing the express app, the server configuration, a listen function.
  */
 export function bootstrapApp(): {
   app: Express;
   config: typeof config;
+  urlEncodedParser: (req: any, res: any, next: any) => void;
   listen: (port: number) => void;
 } {
   const app = express();
+
+  const urlEncodedParser = express.urlencoded({ extended: false });
   
   app.use("/", express.static("public"));
   app.use(express.json());
@@ -34,5 +38,5 @@ export function bootstrapApp(): {
     );
   };
 
-  return { app, config,  listen };
+  return { app, config,  listen, urlEncodedParser };
 }

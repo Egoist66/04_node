@@ -3,10 +3,11 @@ import {HomeController} from "./Controllers/HomeController";
 import {bootstrapApp} from "../bootstrap/bootstrap.ts";
 import {CoursesController} from "./Controllers/CoursesController.ts";
 
-const {app, config, listen} = bootstrapApp();
+const {app, config, listen, urlEncodedParser} = bootstrapApp();
 listen(config.server.port);
 
 
+export const formParser = urlEncodedParser
 const Controllers = [
     UsersController,
     HomeController,
