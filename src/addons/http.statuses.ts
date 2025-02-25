@@ -139,13 +139,20 @@ export const httpStatusCodes = {
   /**
    * The server is refusing to service the request because the entity of the request is in a format not supported by the requested resource for the requested method.
    */
-  "Unsupported Media Type": 416,
+  "Unsupported Media Type": 415,
   /**
-   * The expectation given in an Expect request-header field could not be met by this server, or, if the server is a proxy, the server has unambiguous evidence that the request could not be met by the next-hop server.
+   * The request was well-formed but was unable to be processed due to semantic errors.
    */
-  "Expectation Failed": 417,
+  "Unprocessable Entity": 422,
   /**
-   * Any attempt to brew coffee with a teapot should result in the error code "418 I'm a teapot". The resulting entity body MAY be short and stout.
+   * The server is currently unable to handle the request due to a temporary overloading or maintenance of the server. The implication is that this is a temporary condition which will be alleviated after some delay.
    */
-  "I'm a teapot": 418,
-};
+  "Service Unavailable": 503,
+  /**
+   * The server, while acting as a gateway or proxy, received an invalid response from the upstream server it accessed in attempting to fulfill the request.
+   */
+  "Bad Gateway": 502,
+
+}
+
+  

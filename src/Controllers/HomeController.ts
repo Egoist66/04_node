@@ -32,7 +32,7 @@ export class HomeController extends BaseController {
 
             } 
             console.log(req.body);
-            res.send(`${req.body.userName} - ${req.body.userAge}`);
+            res.send(`${req.body.userName} - ${req.body.userAge}`).status(201);
         })
     }
 }
